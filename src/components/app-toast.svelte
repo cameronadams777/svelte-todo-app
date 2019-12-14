@@ -27,14 +27,14 @@
     margin: 0 auto;
     position: absolute;
     top: 25px;
-    left: calc(100vw / 4);
+    left: 50%;
+    transform: translate(-50%, -100vh);
     z-index: 10;
-    transform: translateY(-100vh);
     transition: all 1s;
   }
 
   .visible {
-    transform: translateY(0);
+    transform: translate(-50%, 0);
   }
 </style>
 

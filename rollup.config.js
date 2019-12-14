@@ -1,8 +1,10 @@
+import autoProcess from 'svelte-preprocess'
 import svelte from 'rollup-plugin-svelte';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
+import { autoPreprocess } from 'svelte-preprocess/dist/autoProcess';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -16,6 +18,7 @@ export default {
 	},
 	plugins: [
 		svelte({
+			preprocess: autoPreprocess(),
 			// enable run-time checks when not in production
 			dev: !production,
 			// we'll extract any component CSS out into

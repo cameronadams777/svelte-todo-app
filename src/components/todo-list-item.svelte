@@ -6,7 +6,7 @@
   let dispatch = createEventDispatcher();
 </script>
 
-<style>
+<style lang="scss">
   .todo-list-item {
     width: 25%;
     padding: 1rem 2rem;
@@ -25,16 +25,17 @@
 
   .delete-button {
     position: absolute;
-    top: calc(100% / 5);
+    top: 50%;
     right: 10px;
     color: white;
     background-color: transparent;
     padding: 0.5rem;
     border: none;
-  }
+    transform: translateY(-50%);
 
-  .delete-button:hover {
-    color: lightgrey;
+    &:hover {
+      color: lightgrey;
+    }
   }
 </style>
 
