@@ -1,4 +1,5 @@
 <script>
+  import axios from "axios";
   import AppInput from "./components/app-input-text.svelte";
   import AppButton from "./components/app-button.svelte";
   import AppToast from "./components/app-toast.svelte";
@@ -8,12 +9,27 @@
   let todoText = "";
   let error = "";
 
-  function addItemToList() {
-    if (!todoText) {
+  async function getTodoItems() {
+    try {
+      const { data } = await axios.get("http://localhost:3000/todos", {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+  }
+
+  function addItemToList(item) {
+    if (!item) {
       error = "Please enter a task before adding...";
       return;
     }
-    todoItems = [...todoItems, todoText];
+    todoItems = [...todoItems, item];
     todoText = "";
   }
 
@@ -25,6 +41,10 @@
   function deleteItemFromList() {
     todoItems = todoItems.filter((item, index) => index === event.detail);
   }
+
+  getTodoItems().then(todoItems => {
+    todoItems.forEach(item => console.log(item) || addItemToList(item.value));
+  });
 </script>
 
 <style>
@@ -53,7 +73,7 @@
   <div
     class={todoItems.length > 0 ? 'search-container top' : 'search-container'}>
     <AppInput placeholder="Enter new item" bind:value={todoText} />
-    <AppButton on:click={addItemToList}>Add</AppButton>
+    <AppButton on:click={addItemToList(todoText)}>Add</AppButton>
   </div>
   <TodoList {todoItems} on:delete={deleteItemFromList} />
 </main>
