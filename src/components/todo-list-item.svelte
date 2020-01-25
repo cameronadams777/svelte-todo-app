@@ -40,7 +40,7 @@
 </style>
 
 <div class="todo-list-item">
-  <span>{item}</span>
+  <span>{item.value}</span>
   <button class="delete-button" on:click={() => dispatch('delete', { index })}>
     X
   </button>

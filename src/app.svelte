@@ -1,5 +1,7 @@
 <script>
   import axios from "axios";
+  import uuid from "uuid";
+  import fromPairs from "lodash/fromPairs";
   import AppInput from "./components/app-input-text.svelte";
   import AppButton from "./components/app-button.svelte";
   import AppToast from "./components/app-toast.svelte";
@@ -9,14 +11,23 @@
   let todoText = "";
   let error = "";
 
+  if (!document.cookie.includes("guid")) {
+    document.cookie = `guid=${uuid()}`;
+  }
+
+  function getGuidFromCookies() {
+    const cookies = fromPairs([document.cookie.split("=")]);
+    return cookies.guid;
+  }
+
   async function getTodoItems() {
     try {
-      const { data } = await axios.get("http://localhost:3000/todos", {
+      const guid = getGuidFromCookies();
+      const { data } = await axios.get(`http://localhost:3000/todos/${guid}`, {
         headers: {
           "Content-Type": "application/json"
         }
       });
-      console.log(data);
       return data;
     } catch (error) {
       console.error(error);
@@ -24,11 +35,31 @@
     }
   }
 
-  function addItemToList(item) {
+  async function storeTodoItem(item) {
+    try {
+      const guid = getGuidFromCookies();
+      await axios.post(
+        `http://localhost:3000/todos/${guid}`,
+        {
+          todoItem: item
+        },
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+    } catch (err) {
+      error = err;
+    }
+  }
+
+  async function addItemToList(item) {
     if (!item) {
       error = "Please enter a task before adding...";
       return;
     }
+    await storeTodoItem(item);
     todoItems = [...todoItems, item];
     todoText = "";
   }
@@ -38,12 +69,27 @@
     error = "";
   }
 
-  function deleteItemFromList() {
-    todoItems = todoItems.filter((item, index) => index === event.detail);
+  async function deleteItemFromList(event) {
+    let itemToDelete;
+    const guid = getGuidFromCookies();
+    todoItems = todoItems.filter((item, index) => {
+      if (index === event.detail.index) itemToDelete = item;
+      return index !== event.detail.index;
+    });
+    if (!itemToDelete) return;
+    await axios.delete(
+      `http://localhost:3000/todos/${guid}/${itemToDelete.id}`,
+      {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
   }
 
-  getTodoItems().then(todoItems => {
-    todoItems.forEach(item => console.log(item) || addItemToList(item.value));
+  getTodoItems().then(items => {
+    if (!items) return;
+    items.forEach(item => (todoItems = todoItems.concat(item)));
   });
 </script>
 
