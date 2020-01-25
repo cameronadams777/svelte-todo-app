@@ -6,10 +6,12 @@
   import AppButton from "./components/app-button.svelte";
   import AppToast from "./components/app-toast.svelte";
   import TodoList from "./components/todo-list.svelte";
+  import ThemeToggle from "./components/theme-toggle.svelte";
 
   let todoItems = [];
   let todoText = "";
   let error = "";
+  let theme = "dark";
 
   if (!document.cookie.includes("guid")) {
     document.cookie = `guid=${uuid()}`;
@@ -87,6 +89,12 @@
     );
   }
 
+  function updateTheme() {
+    console.log(theme);
+    if (theme === light) theme = "dark";
+    else theme = "light";
+  }
+
   getTodoItems().then(items => {
     if (!items) return;
     items.forEach(item => (todoItems = todoItems.concat(item)));
@@ -94,12 +102,20 @@
 </script>
 
 <style>
-  main {
+  .app-light {
     text-align: center;
     padding: 1em;
     height: 100vh;
     margin: 0 auto;
     background-color: white;
+  }
+
+  .app-dark {
+    text-align: center;
+    padding: 1em;
+    height: 100vh;
+    margin: 0 auto;
+    background-color: black;
   }
 
   .search-container {
@@ -112,7 +128,8 @@
   }
 </style>
 
-<main>
+<main class={theme === 'light' ? 'app-light' : 'app-dark'}>
+  <ThemeToggle {theme} on:click{updateTheme} />
   {#if error.length}
     <AppToast {error} on:clear={clearError} />
   {/if}
