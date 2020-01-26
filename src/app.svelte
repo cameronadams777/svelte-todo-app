@@ -6,7 +6,7 @@
   import AppButton from "./components/app-button.svelte";
   import AppToast from "./components/app-toast.svelte";
   import TodoList from "./components/todo-list.svelte";
-  import ThemeToggle from "./components/theme-toggle.svelte";
+  import { SunIcon, MoonIcon } from "svelte-feather-icons";
 
   let todoItems = [];
   let todoText = "";
@@ -15,6 +15,11 @@
 
   if (!document.cookie.includes("guid")) {
     document.cookie = `guid=${uuid()}`;
+  }
+
+  function updateTheme() {
+    if (theme === "light") theme = "dark";
+    else theme = "light";
   }
 
   function getGuidFromCookies() {
@@ -62,7 +67,7 @@
       return;
     }
     await storeTodoItem(item);
-    todoItems = [...todoItems, item];
+    todoItems = [...todoItems, { value: item }];
     todoText = "";
   }
 
@@ -89,25 +94,20 @@
     );
   }
 
-  function updateTheme() {
-    console.log(theme);
-    if (theme === light) theme = "dark";
-    else theme = "light";
-  }
-
   getTodoItems().then(items => {
     if (!items) return;
     items.forEach(item => (todoItems = todoItems.concat(item)));
   });
 </script>
 
-<style>
+<style lang="scss">
   .app-light {
     text-align: center;
     padding: 1em;
     height: 100vh;
     margin: 0 auto;
     background-color: white;
+    transition: background-color 1s linear;
   }
 
   .app-dark {
@@ -116,6 +116,31 @@
     height: 100vh;
     margin: 0 auto;
     background-color: black;
+    transition: background-color 1s linear;
+  }
+
+  .theme-toggle {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+  }
+
+  .toggle-light {
+    color: black;
+
+    &:hover {
+      cursor: pointer;
+      color: darkgrey;
+    }
+  }
+
+  .toggle-dark {
+    color: white;
+
+    &:hover {
+      cursor: pointer;
+      color: lightgrey;
+    }
   }
 
   .search-container {
@@ -129,7 +154,15 @@
 </style>
 
 <main class={theme === 'light' ? 'app-light' : 'app-dark'}>
-  <ThemeToggle {theme} on:click{updateTheme} />
+  <div
+    class={theme === 'light' ? 'theme-toggle toggle-light' : 'theme-toggle toggle-dark'}
+    on:click={updateTheme}>
+    {#if theme === 'light'}
+      <SunIcon size="24" />
+    {:else}
+      <MoonIcon size="24" />
+    {/if}
+  </div>
   {#if error.length}
     <AppToast {error} on:clear={clearError} />
   {/if}
