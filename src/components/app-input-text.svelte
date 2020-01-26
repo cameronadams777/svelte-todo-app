@@ -1,18 +1,51 @@
 <script>
   export let placeholder;
+  export let label = "";
   export let value = "";
+
+  let focused = false;
 </script>
 
 <style lang="scss">
-  input {
+  .app-input-container {
+    position: relative;
+    margin: 0 0.5rem;
+  }
+
+  .app-input-label {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    font-size: 1.5rem;
+    color: darkgrey;
+    transition: all 0.25s linear;
+    pointer-events: none;
+  }
+
+  .focused {
+    top: 5px;
+    left: 7px;
+    font-size: 0.25rem;
+    color: #6200ee;
+  }
+
+  .app-input {
     border-radius: 5px;
     outline: none;
-
-    &:focus {
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-        0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    }
+    padding: 1rem 1rem;
   }
 </style>
 
-<input type="text" {placeholder} bind:value />
+<div class="app-input-container">
+  <input
+    class="app-input"
+    type="text"
+    {placeholder}
+    bind:value
+    on:focus={() => (focused = true)}
+    on:blur={() => (focused = false)} />
+  <label
+    class={focused || value.length ? 'app-input-label focused' : 'app-input-label'}>
+    {label}
+  </label>
+</div>

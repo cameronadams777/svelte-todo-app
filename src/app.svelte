@@ -106,7 +106,7 @@
     padding: 1em;
     height: 100vh;
     margin: 0 auto;
-    background-color: white;
+    background-color: #ffffff;
     transition: background-color 1s linear;
   }
 
@@ -115,7 +115,7 @@
     padding: 1em;
     height: 100vh;
     margin: 0 auto;
-    background-color: black;
+    background-color: #212121;
     transition: background-color 1s linear;
   }
 
@@ -144,6 +144,10 @@
   }
 
   .search-container {
+    width: 50%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
     transform: translateY(calc(100vh / 2));
     transition: transform 0.5s;
   }
@@ -168,8 +172,8 @@
   {/if}
   <div
     class={todoItems.length > 0 ? 'search-container top' : 'search-container'}>
-    <AppInput placeholder="Enter new item" bind:value={todoText} />
-    <AppButton on:click={addItemToList(todoText)}>Add</AppButton>
+    <AppInput label="Search:" bind:value={todoText} />
+    <AppButton on:click={addItemToList(todoText)}>Add Task</AppButton>
   </div>
   <TodoList {todoItems} on:delete={deleteItemFromList} />
 </main>

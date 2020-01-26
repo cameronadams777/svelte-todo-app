@@ -10,11 +10,18 @@
   .todo-list-item {
     width: 25%;
     padding: 1rem 2rem;
-    border-radius: 2px;
-    background-color: #ff3e00;
+    border-radius: 5px;
     color: white;
     margin: 0.5rem auto;
     position: relative;
+  }
+
+  .light {
+    background-color: #e63946;
+  }
+
+  .dark {
+    background-color: #fb4b4e;
   }
 
   @media (min-width: 375px) and (max-width: 576px) {
