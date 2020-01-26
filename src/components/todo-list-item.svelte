@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte";
+  import { theme } from "../state/interface.js";
   export let item;
   export let index;
 
@@ -46,7 +47,8 @@
   }
 </style>
 
-<div class="todo-list-item">
+<div
+  class={$theme === 'light' ? 'todo-list-item light' : 'todo-list-item dark'}>
   <span>{item.value}</span>
   <button class="delete-button" on:click={() => dispatch('delete', { index })}>
     X

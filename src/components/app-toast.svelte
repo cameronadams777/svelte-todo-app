@@ -1,19 +1,5 @@
 <script>
-  import { onMount, createEventDispatcher } from "svelte";
-  export let error;
-
-  let visible = false;
-  let dispatch = createEventDispatcher();
-
-  onMount(() => {
-    setTimeout(() => {
-      visible = true;
-      setTimeout(() => {
-        visible = false;
-        dispatch("clear");
-      }, 2500);
-    }, 10);
-  });
+  import { error, clearError } from "../state/interface.js";
 </script>
 
 <style>
@@ -38,4 +24,4 @@
   }
 </style>
 
-<div class={visible ? 'toast visible' : 'toast'}>{error}</div>
+<div class={$error.visible ? 'toast visible' : 'toast'}>{$error.value}</div>

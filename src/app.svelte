@@ -6,20 +6,14 @@
   import AppButton from "./components/app-button.svelte";
   import AppToast from "./components/app-toast.svelte";
   import TodoList from "./components/todo-list.svelte";
-  import { SunIcon, MoonIcon } from "svelte-feather-icons";
+  import ThemeToggle from "./components/theme-toggle.svelte";
+  import { theme, updateTheme, updateError } from "./state/interface.js";
 
   let todoItems = [];
   let todoText = "";
-  let error = "";
-  let theme = "dark";
 
   if (!document.cookie.includes("guid")) {
     document.cookie = `guid=${uuid()}`;
-  }
-
-  function updateTheme() {
-    if (theme === "light") theme = "dark";
-    else theme = "light";
   }
 
   function getGuidFromCookies() {
@@ -37,7 +31,7 @@
       });
       return data;
     } catch (error) {
-      console.error(error);
+      updateError(error);
       return;
     }
   }
@@ -56,24 +50,19 @@
           }
         }
       );
-    } catch (err) {
-      error = err;
+    } catch (error) {
+      updateError(error);
     }
   }
 
   async function addItemToList(item) {
     if (!item) {
-      error = "Please enter a task before adding...";
+      updateError("Please enter a task before adding...");
       return;
     }
     await storeTodoItem(item);
     todoItems = [...todoItems, { value: item }];
     todoText = "";
-  }
-
-  function clearError() {
-    console.log(error);
-    error = "";
   }
 
   async function deleteItemFromList(event) {
@@ -119,30 +108,6 @@
     transition: background-color 1s linear;
   }
 
-  .theme-toggle {
-    position: absolute;
-    top: 25px;
-    right: 25px;
-  }
-
-  .toggle-light {
-    color: black;
-
-    &:hover {
-      cursor: pointer;
-      color: darkgrey;
-    }
-  }
-
-  .toggle-dark {
-    color: white;
-
-    &:hover {
-      cursor: pointer;
-      color: lightgrey;
-    }
-  }
-
   .search-container {
     width: 50%;
     margin: 0 auto;
@@ -157,19 +122,9 @@
   }
 </style>
 
-<main class={theme === 'light' ? 'app-light' : 'app-dark'}>
-  <div
-    class={theme === 'light' ? 'theme-toggle toggle-light' : 'theme-toggle toggle-dark'}
-    on:click={updateTheme}>
-    {#if theme === 'light'}
-      <SunIcon size="24" />
-    {:else}
-      <MoonIcon size="24" />
-    {/if}
-  </div>
-  {#if error.length}
-    <AppToast {error} on:clear={clearError} />
-  {/if}
+<main class={$theme === 'light' ? 'app-light' : 'app-dark'}>
+  <ThemeToggle />
+  <AppToast />
   <div
     class={todoItems.length > 0 ? 'search-container top' : 'search-container'}>
     <AppInput label="Search:" bind:value={todoText} />
