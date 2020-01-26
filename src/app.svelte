@@ -7,6 +7,7 @@
   import AppToast from "./components/app-toast.svelte";
   import TodoList from "./components/todo-list.svelte";
   import ThemeToggle from "./components/theme-toggle.svelte";
+  import { getTodos, createNewTodoItem, deleteTodoItem } from "./api/todos.js";
   import { theme, updateTheme, updateError } from "./state/interface.js";
 
   let todoItems = [];
@@ -24,13 +25,10 @@
   async function getTodoItems() {
     try {
       const guid = getGuidFromCookies();
-      const { data } = await axios.get(`http://localhost:3000/todos/${guid}`, {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
+      const { data } = await getTodos({ guid });
       return data;
     } catch (error) {
+      console.error(error);
       updateError(error);
       return;
     }
@@ -39,17 +37,10 @@
   async function storeTodoItem(item) {
     try {
       const guid = getGuidFromCookies();
-      await axios.post(
-        `http://localhost:3000/todos/${guid}`,
-        {
-          todoItem: item
-        },
-        {
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      );
+      const payload = {
+        todoItem: item
+      };
+      await createNewTodoItem({ guid, payload });
     } catch (error) {
       updateError(error);
     }
@@ -73,14 +64,7 @@
       return index !== event.detail.index;
     });
     if (!itemToDelete) return;
-    await axios.delete(
-      `http://localhost:3000/todos/${guid}/${itemToDelete.id}`,
-      {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
-    );
+    await deleteTodoItem({ guid, itemId: itemToDelete.id });
   }
 
   getTodoItems().then(items => {
