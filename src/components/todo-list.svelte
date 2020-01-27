@@ -1,6 +1,6 @@
 <script>
   import TodoListItem from "./todo-list-item.svelte";
-  export let todoItems;
+  import { todoItems } from "../state/todos.js";
 </script>
 
 <style>
@@ -16,8 +16,8 @@
   }
 </style>
 
-<div class={todoItems.length > 0 ? 'todo-list visible' : 'todo-list'}>
-  {#each todoItems as item, index}
+<div class={$todoItems.length > 0 ? 'todo-list visible' : 'todo-list'}>
+  {#each $todoItems as item, index}
     <TodoListItem {item} {index} on:delete />
   {/each}
 </div>
