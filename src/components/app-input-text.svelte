@@ -1,4 +1,5 @@
 <script>
+  import { theme } from "../state/interface.js";
   export let placeholder;
   export let label = "";
   export let value = "";
@@ -22,14 +23,29 @@
     pointer-events: none;
   }
 
-  .focused {
+  .focused-light {
     top: 5px;
     left: 7px;
     font-size: 0.25rem;
     color: #6200ee;
   }
 
-  .app-input {
+  .focused-dark {
+    top: 5px;
+    left: 7px;
+    font-size: 0.25rem;
+    color: darkgray;
+  }
+
+  .app-input-dark {
+    border-radius: 5px;
+    outline: none;
+    padding: 1rem 1rem;
+    background-color: transparent;
+    color: white;
+  }
+
+  .app-input-light {
     border-radius: 5px;
     outline: none;
     padding: 1rem 1rem;
@@ -38,14 +54,14 @@
 
 <div class="app-input-container">
   <input
-    class="app-input"
+    class={$theme === 'light' ? 'app-input-light' : 'app-input-dark'}
     type="text"
     {placeholder}
     bind:value
     on:focus={() => (focused = true)}
     on:blur={() => (focused = false)} />
   <label
-    class={focused || value.length ? 'app-input-label focused' : 'app-input-label'}>
+    class={focused || value.length ? ($theme === 'light' ? 'app-input-label focused-light' : 'app-input-label focused-dark') : 'app-input-label'}>
     {label}
   </label>
 </div>
