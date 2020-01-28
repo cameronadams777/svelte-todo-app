@@ -1,0 +1,3 @@
+# State Management
+
+This is where the universal state for the application lives. Modules should be created based on app meaning rather than having one giant svelte store that is unmaintainable. Take for example `todo.js` which contains all of the logic for creating/managing the todo list for the app or `interface.js` which manages the state for various UI related things like theme and the global error message used by the app.

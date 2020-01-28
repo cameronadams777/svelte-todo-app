@@ -1,0 +1,3 @@
+# API
+
+This folder is meant to add a layer for api integration. So that the application is not cluttered with a bunch of different axios methods, we define how all our requests should be setup in the `http.js` utility and then utilize it for all of our API calls. Think of the various api modules the same as when you are creating svelte state stores and define them by their purpose (i.e. `todo.js` is all of the api calls used when working with the todos service).
