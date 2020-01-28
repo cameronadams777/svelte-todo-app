@@ -1,10 +1,10 @@
 # Svelte Todo-App
 
-This is a simple application built with [SvelteJS]('https://svelte.dev') for learning purposes.
+This is a simple application built with [SvelteJS](https://svelte.dev) for learning purposes.
 
 ## Todos 
 
-This application is meant to be used with the todo service that I have created [here]('https://gitlab.com/cameronadams777/todo-service'). 
+This application is meant to be used with the todo service that I have created [here](https://gitlab.com/cameronadams777/todo-service). 
 
 All logic pertaining to the todos should stay confined to the todos svelte store which makes the functionality easier to test and makes the functionality usable across the app.
 
