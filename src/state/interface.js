@@ -1,7 +1,9 @@
 import { get, writable } from 'svelte/store'
 
-export const theme = writable('dark')
+export const theme = writable('light')
 export const error = writable('')
+export const activeProjectDetailTab = writable('tasks')
+export const displayAddProjectModal = writable(false)
 
 export const updateTheme = () => {
   const themeVar = get(theme)
@@ -30,3 +32,9 @@ export const clearError = () => {
     value: ''
   })
 }
+
+export const updateActiveProjectDetailTab = (newValue) => {
+  activeProjectDetailTab.set(newValue)
+}
+
+export const updateDisplayAddProjectModal = (newValue) => displayAddProjectModal.set(newValue)
