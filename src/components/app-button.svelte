@@ -4,8 +4,7 @@
 
 <style lang="scss">
   .app-button {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding: 0.5rem 1.5rem;
     border-radius: 5px;
     color: white;
     border: none;

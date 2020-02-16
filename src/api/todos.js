@@ -1,13 +1,13 @@
 import { get, post, del } from './utils/http.js';
 
-export const getTodos = ({ guid }) => {
+export const getProjects = ({ guid }) => {
   return get({ endpoint: `todos/${guid}` })
 }
 
-export const createNewTodoItem = ({ guid, payload }) => {
+export const createNewProject = ({ guid, payload }) => {
   return post({ endpoint: `todos/${guid}`, payload })
 }
 
-export const deleteTodoItem = ({ guid, itemId }) => {
+export const deleteProject = ({ guid, itemId }) => {
   return del({ endpoint: `todos/${guid}/${itemId}` })
 }

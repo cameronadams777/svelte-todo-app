@@ -1,15 +1,20 @@
 import { get, writable } from 'svelte/store';
-import { getTodos, createNewTodoItem, deleteTodoItem } from "../api/todos.js";
+import { getProjects, createNewProject } from "../api/todos.js";
 import { getGuidFromCookies } from '../utils/index.js';
 import { updateError } from './interface.js';
 
+export const projects = writable([]);
+export const activeProjectIndex = writable(0);
+export const totalTasks = writable(0);
+export const tasks = writable([]);
+export const members = writable([]);
 export const todoItems = writable([]);
 export const todoText = writable("");
 
-export const getTodoItems = async () => {
+export const retrieveProjects = async () => {
   try {
     const guid = getGuidFromCookies();
-    const { data } = await getTodos({ guid });
+    const { data } = await getProjects({ guid });
     return data;
   } catch (error) {
     updateError(error);
@@ -17,10 +22,9 @@ export const getTodoItems = async () => {
   }
 }
 
-export const initializeTodoItems = (items) => todoItems.set(items);
+export const initializeProjects = (items) => projects.set(items);
 
-export const addItemToList = async () => {
-  const item = get(todoText)
+export const addProject = async (item) => {
   if (!item) {
     updateError("Please enter a task before adding...");
     return;
@@ -28,9 +32,9 @@ export const addItemToList = async () => {
   try {
     const guid = getGuidFromCookies();
     const payload = {
-      todoItem: item
+      newProject: item
     };
-    await createNewTodoItem({ guid, payload });
+    await createNewProject({ guid, payload });
   } catch (error) {
     updateError(error);
   }
@@ -38,13 +42,27 @@ export const addItemToList = async () => {
   todoText.set("");
 }
 
-export const deleteItemFromList = async (event) => {
-  let itemToDelete;
-  const guid = getGuidFromCookies();
-  const filteredTodoItems = get(todoItems).filter((item, index) => {
-    if (index === event.detail.index) itemToDelete = item;
-    return index !== event.detail.index;
-  });
-  todoItems.set(filteredTodoItems)
-  await deleteTodoItem({ guid, itemId: itemToDelete.id });
-}
+export const updateActiveProjectIndex = (newIndex) => activeProjectIndex.set(newIndex)
+
+projects.subscribe(value => {
+  if (value && value[get(activeProjectIndex)]) {
+    const tempMembers = value[get(activeProjectIndex)].members;
+    const tempTasks = value[get(activeProjectIndex)].tasks;
+    const nonCompletedTasks = tempTasks ? tempTasks.filter(task => !task.completed) : 0;
+    tasks.set(nonCompletedTasks.length ? tempTasks : []);
+    members.set(tempMembers.length ? tempMembers : []);
+    totalTasks.set(nonCompletedTasks.length || 0);
+  }
+})
+
+activeProjectIndex.subscribe(newIndex => {
+  const projectsValue = get(projects)
+  if (projectsValue && projectsValue[newIndex]) {
+    const tempMembers = value[get(activeProjectIndex)].members;
+    const tempTasks = projectsValue[newIndex].tasks;
+    const nonCompletedTasks = tempTasks ? tempTasks.filter(task => !task.completed) : 0;
+    tasks.set(nonCompletedTasks.length ? tempTasks : []);
+    members.set(tempMembers.length ? tempMembers : []);
+    totalTasks.set(nonCompletedTasks.length || 0);
+  }
+})

@@ -1,72 +1,43 @@
 <script>
-  import axios from "axios";
   import uuid from "uuid";
-  import AppInput from "./components/app-input-text.svelte";
-  import AppButton from "./components/app-button.svelte";
-  import AppToast from "./components/app-toast.svelte";
-  import TodoList from "./components/todo-list.svelte";
-  import ThemeToggle from "./components/theme-toggle.svelte";
   import { onMount } from "svelte";
-  import { theme, updateTheme, updateError } from "./state/interface.js";
-  import {
-    todoItems,
-    todoText,
-    getTodoItems,
-    addItemToList,
-    deleteItemFromList,
-    initializeTodoItems
-  } from "./state/todos.js";
+  import TodoGreetingSection from "./components/todo-greeting-section.svelte";
+  import ProjectSelector from "./components/project-selector.svelte";
+  import ProjectDetailTabs from "./components/project-detail-tabs.svelte";
+  import CurrentProjectTasks from "./components/current-project-tasks.svelte";
+  import CurrentProjectMembers from "./components/current-project-members.svelte";
+  import CurrentProjectSettings from "./components/current-project-settings.svelte";
+  import TheGlobalModal from "./components/the-global-modal.svelte";
+  import Tailwindcss from "./components/tailwindcss.svelte";
+  import { activeProjectDetailTab } from "./state/interface.js";
+  import { retrieveProjects, initializeProjects } from "./state/todos.js";
 
   if (!document.cookie.includes("guid")) {
     document.cookie = `guid=${uuid()}`;
   }
 
+  const projectDetailComponents = {
+    tasks: CurrentProjectTasks,
+    members: CurrentProjectMembers,
+    settings: CurrentProjectSettings
+  };
+
   onMount(async () => {
-    const items = await getTodoItems();
-    initializeTodoItems(items);
+    const todos = await retrieveProjects();
+    initializeProjects(todos);
   });
 </script>
 
-<style lang="scss">
-  .app-light {
-    text-align: center;
-    padding: 1em;
-    height: 100vh;
-    margin: 0 auto;
-    background-color: #ffffff;
-    transition: background-color 1s linear;
-  }
+<section class="container mx-auto">
+  <!-- Header Section -->
+  <TodoGreetingSection />
 
-  .app-dark {
-    text-align: center;
-    padding: 1em;
-    height: 100vh;
-    margin: 0 auto;
-    background-color: #212121;
-    transition: background-color 1s linear;
-  }
+  <!-- Projects Section -->
+  <ProjectSelector />
 
-  .search-container {
-    width: 50%;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    transform: translateY(calc(100vh / 2));
-    transition: transform 0.5s;
-  }
+  <!-- Project Details Section -->
+  <ProjectDetailTabs />
 
-  .top {
-    transform: translateY(0);
-  }
-</style>
-
-<main class={$theme === 'light' ? 'app-light' : 'app-dark'}>
-  <ThemeToggle />
-  <AppToast />
-  <div
-    class={$todoItems.length > 0 ? 'search-container top' : 'search-container'}>
-    <AppInput label="Search:" bind:value={$todoText} />
-    <AppButton on:click={addItemToList}>Add Task</AppButton>
-  </div>
-  <TodoList on:delete={deleteItemFromList} />
-</main>
+  <svelte:component this={projectDetailComponents[$activeProjectDetailTab]} />
+</section>
+<TheGlobalModal />
