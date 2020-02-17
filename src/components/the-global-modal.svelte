@@ -1,9 +1,11 @@
 <script>
   import AddProjectModal from "./add-project-modal.svelte";
+  import AddMemberModal from "./add-member-modal.svelte";
   import AddTaskModal from "./add-task-modal.svelte";
   import {
     displayAddProjectModal,
-    displayAddTaskModal
+    displayAddTaskModal,
+    displayAddMemberModal
   } from "../state/interface.js";
 </script>
 
@@ -13,4 +15,8 @@
 
 {#if $displayAddTaskModal}
   <AddTaskModal />
+{/if}
+
+{#if $displayAddMemberModal}
+  <AddMemberModal />
 {/if}
