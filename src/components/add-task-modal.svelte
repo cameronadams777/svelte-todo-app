@@ -5,32 +5,39 @@
   import AppButton from "./app-button.svelte";
   import { XIcon } from "svelte-feather-icons";
   import {
-    addProject,
+    projects,
+    activeProjectIndex,
+    updateProjectFields,
     retrieveProjects,
     initializeProjects
   } from "../state/todos.js";
   import {
     updateError,
-    updateDisplayAddProjectModal
+    updateDisplayAddTaskModal
   } from "../state/interface.js";
 
-  let projectTitle;
-  let dueDate;
+  let taskTitle;
+  let time;
 
-  async function attemptToAddNewProject() {
+  async function attemptToAddNewTask() {
     try {
-      let item = {
-        title: projectTitle,
-        due_date: moment(new Date(dueDate).toISOString()),
-        tasks: [],
-        members: [],
-        settings: {}
+      // Create item with existing project
+      const newProjectValue = {
+        ...$projects[$activeProjectIndex],
+        tasks: [
+          ...$projects[$activeProjectIndex].tasks,
+          {
+            title: taskTitle,
+            timestamp: moment(new Date(time).toTimeString())
+          }
+        ]
       };
-      await addProject(item);
+      await updateProjectFields(newProjectValue);
       const projects = await retrieveProjects();
-      initializeProjects(projects);
-      updateDisplayAddProjectModal(false);
+      await initializeProjects(projects);
+      updateDisplayAddTaskModal(false);
     } catch (error) {
+      console.log(error);
       updateError(error);
     }
   }
@@ -61,11 +68,11 @@
     form-container rounded-lg">
     <span
       class="absolute close-icon cursor-pointer hover:text-gray-600"
-      on:click={() => updateDisplayAddProjectModal(false)}>
+      on:click={() => updateDisplayAddTaskModal(false)}>
       <XIcon size="30" />
     </span>
-    <AppInputText placeholder="Project Title" bind:value={projectTitle} />
-    <AppInputText placeholder="Due Date" bind:value={dueDate} />
-    <AppButton on:click={attemptToAddNewProject}>Submit</AppButton>
+    <AppInputText placeholder="Enter A Task" bind:value={taskTitle} />
+    <AppInputText placeholder="16:00:00" bind:value={time} />
+    <AppButton on:click={attemptToAddNewTask}>Submit</AppButton>
   </div>
 </AppModal>

@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store';
-import { getProjects, createNewProject } from "../api/todos.js";
+import { getProjects, createNewProject, updateProjects } from "../api/todos.js";
 import { getGuidFromCookies } from '../utils/index.js';
 import { updateError } from './interface.js';
 
@@ -8,8 +8,6 @@ export const activeProjectIndex = writable(0);
 export const totalTasks = writable(0);
 export const tasks = writable([]);
 export const members = writable([]);
-export const todoItems = writable([]);
-export const todoText = writable("");
 
 export const retrieveProjects = async () => {
   try {
@@ -38,8 +36,22 @@ export const addProject = async (item) => {
   } catch (error) {
     updateError(error);
   }
-  todoItems.update(currentValue => currentValue.concat({ value: item }));
-  todoText.set("");
+}
+
+export const updateProjectFields = async (project) => {
+  if (!project) {
+    updateError("Please enter a task before adding...");
+    return;
+  }
+  try {
+    const guid = getGuidFromCookies();
+    const payload = {
+      project
+    };
+    await updateProjects({ guid, payload });
+  } catch (error) {
+    updateError(error);
+  }
 }
 
 export const updateActiveProjectIndex = (newIndex) => activeProjectIndex.set(newIndex)
@@ -58,7 +70,7 @@ projects.subscribe(value => {
 activeProjectIndex.subscribe(newIndex => {
   const projectsValue = get(projects)
   if (projectsValue && projectsValue[newIndex]) {
-    const tempMembers = value[get(activeProjectIndex)].members;
+    const tempMembers = projectsValue[get(activeProjectIndex)].members;
     const tempTasks = projectsValue[newIndex].tasks;
     const nonCompletedTasks = tempTasks ? tempTasks.filter(task => !task.completed) : 0;
     tasks.set(nonCompletedTasks.length ? tempTasks : []);
